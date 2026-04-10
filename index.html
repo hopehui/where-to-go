@@ -96,13 +96,31 @@
 
     .bookmarklet:hover { background: #f0f0f0; }
 
+    .step-label-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
     .step-label {
       font-size: 13px;
       font-weight: 600;
       color: #111;
-      display: block;
-      margin-bottom: 8px;
     }
+
+    .btn-clear {
+      font-size: 12px;
+      font-weight: 500;
+      color: #aaa;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: color 0.15s;
+    }
+
+    .btn-clear:hover { color: #c00; }
 
     textarea {
       width: 100%;
@@ -214,7 +232,10 @@
       <p class="hint">Then go to your Google Maps list, scroll to the bottom, and click it.</p>
     </div>
 
-    <label class="step-label">Step 2 — paste your places</label>
+    <div class="step-label-row">
+      <span class="step-label">Step 2 — paste your places</span>
+      <button class="btn-clear" id="clear-btn">Clear list</button>
+    </div>
     <textarea id="places-input" placeholder="Paste from bookmarklet, or type one place per line"></textarea>
 
     <button id="pick-btn" class="btn-primary">Pick a random place</button>
@@ -232,6 +253,24 @@
   </div>
 
   <script>
+    const textarea = document.getElementById('places-input');
+
+    const saved = localStorage.getItem('places');
+    if (saved) textarea.value = saved;
+
+    textarea.addEventListener('input', function() {
+      localStorage.setItem('places', this.value);
+    });
+
+    document.getElementById('clear-btn').addEventListener('click', function() {
+      if (textarea.value && confirm('Clear your saved list?')) {
+        textarea.value = '';
+        localStorage.removeItem('places');
+        document.getElementById('result-box').style.display = 'none';
+        document.getElementById('error-msg').style.display = 'none';
+      }
+    });
+
     function parsePlaces(raw) {
       return raw
         .split('\n')
@@ -240,7 +279,7 @@
     }
 
     function pickPlace() {
-      const input = document.getElementById('places-input').value;
+      const input = textarea.value;
       const errorMsg = document.getElementById('error-msg');
       const resultBox = document.getElementById('result-box');
       const resultName = document.getElementById('result-name');
