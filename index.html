@@ -28,7 +28,7 @@
     <p style="font-size: 13px; font-weight: 500; margin: 0 0 4px;">Step 1 — set up the bookmarklet</p>
     <p class="label" style="margin-bottom: 12px;">Drag this to your bookmarks bar. You only need to do this once.</p>
     <a class="btn bookmarklet"
-      href="javascript:(function(){const els=document.querySelectorAll('.fontHeadlineSmall');const places=[...els].map(e=>e.textContent.trim()).filter(Boolean);if(places.length===0){alert('No places found. Make sure you have scrolled through your full list.');}else{navigator.clipboard.writeText(places.join('\n')).then(()=>alert('Copied '+places.length+' places to clipboard!'));}})();"
+      href="javascript:(function(){var selectors=['.fontHeadlineSmall','[data-value] .fontBodyMedium','h3.fontHeadlineSmall','[aria-label] h3'];var places=[];for(var i=0;i<selectors.length;i++){var els=document.querySelectorAll(selectors[i]);if(els.length>0){places=[...els].map(function(e){return e.textContent.trim();}).filter(Boolean);break;}}if(places.length===0){alert('Could not find any places.\n\nTry:\n1. Make sure you are on your saved list page\n2. Scroll to the bottom of the list first\n3. If this keeps failing, the app may need updating');}else{navigator.clipboard.writeText(places.join('\n')).then(function(){alert('Copied '+places.length+' places to clipboard!');}).catch(function(){prompt('Clipboard blocked. Copy this manually:',places.join('\n'));});}})();"
       onclick="return false;">
       ☰ Copy my places
     </a>
