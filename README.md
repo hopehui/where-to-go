@@ -1,8 +1,8 @@
-# Where to eat
+# Where to go
 
 A simple tool to pick a random place from your Google Maps saved list.
 
-🔗 <a href="https://hopehui.github.io/where-to-eat/" target="_blank">**where-to-eat**</a>
+🔗 <a href="https://hopehui.github.io/where-to-go/" target="_blank">**where-to-go**</a>
 
 ---
 
