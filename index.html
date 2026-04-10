@@ -5,49 +5,233 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Random place picker</title>
   <style>
-    body { font-family: sans-serif; max-width: 520px; margin: 0 auto; padding: 2rem 1rem; color: #111; }
-    .card { background: #f5f5f5; border-radius: 8px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; }
-    .label { font-size: 13px; color: #666; display: block; margin-bottom: 6px; }
-    .hint { font-size: 12px; color: #888; margin: 10px 0 0; }
-    textarea { width: 100%; height: 140px; font-size: 14px; padding: 10px; box-sizing: border-box; border: 1px solid #ddd; border-radius: 6px; font-family: sans-serif; resize: vertical; }
-    .btn { font-size: 14px; padding: 8px 16px; border-radius: 6px; border: 1px solid #ccc; background: #fff; cursor: pointer; text-decoration: none; color: #111; display: inline-block; }
-    .btn:hover { background: #f5f5f5; }
-    .btn-full { width: 100%; padding: 10px; font-size: 15px; font-weight: 500; box-sizing: border-box; }
-    #result-box { display: none; margin-top: 1.5rem; background: #f5f5f5; border-radius: 8px; padding: 1.5rem; text-align: center; }
-    #result-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
-    #error-msg { color: red; font-size: 13px; margin-top: 8px; display: none; text-align: center; }
-    .bookmarklet { cursor: grab; user-select: none; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #fff;
+      color: #111;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 4rem 1.5rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .badge {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      color: #555;
+      border: 1px solid #ddd;
+      border-radius: 999px;
+      padding: 4px 12px;
+      margin-bottom: 1.5rem;
+    }
+
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.03em;
+      margin-bottom: 0.6rem;
+      color: #111;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: #777;
+      margin-bottom: 2.5rem;
+      line-height: 1.5;
+    }
+
+    .card {
+      background: #f7f7f7;
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111;
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .hint {
+      font-size: 12px;
+      color: #aaa;
+      margin-top: 10px;
+    }
+
+    .bookmarklet {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: 999px;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #111;
+      cursor: grab;
+      text-decoration: none;
+      user-select: none;
+      transition: background 0.15s;
+    }
+
+    .bookmarklet:hover { background: #f0f0f0; }
+
+    .step-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      height: 130px;
+      font-size: 14px;
+      padding: 12px 14px;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      font-family: inherit;
+      resize: vertical;
+      color: #111;
+      background: #fff;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+
+    textarea:focus { border-color: #aaa; }
+    textarea::placeholder { color: #bbb; }
+
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 12px;
+      border: none;
+      background: #111;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.15s;
+      letter-spacing: -0.01em;
+    }
+
+    .btn-primary:hover { background: #333; }
+
+    .btn-ghost {
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #111;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.15s;
+    }
+
+    .btn-ghost:hover { background: #f5f5f5; }
+
+    #error-msg {
+      color: #c00;
+      font-size: 13px;
+      margin-top: 8px;
+      display: none;
+      text-align: center;
+    }
+
+    #result-box {
+      display: none;
+      margin-top: 1.25rem;
+      background: #f7f7f7;
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+
+    .result-label {
+      font-size: 12px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #aaa;
+      margin-bottom: 10px;
+    }
+
+    #result-name {
+      font-size: 1.9rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: #111;
+      line-height: 1.2;
+      margin-bottom: 1.25rem;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
   </style>
 </head>
 <body>
+  <div class="container">
 
-  <h1 style="font-size: 22px; font-weight: 500; margin-bottom: 6px;">Random place picker</h1>
-  <p style="color: #666; font-size: 14px; margin-top: 0;">Paste your Google Maps list, get a random place.</p>
+    <span class="badge">Google Maps ↗</span>
 
-  <div class="card">
-    <p style="font-size: 13px; font-weight: 500; margin: 0 0 4px;">Step 1 — set up the bookmarklet</p>
-    <p class="label" style="margin-bottom: 12px;">Drag this to your bookmarks bar. You only need to do this once.</p>
-    <a class="btn bookmarklet"
-      href="javascript:(function(){var places=[];var selectors=['.fontHeadlineSmall','h3.fontHeadlineSmall','[class*=fontHeadlineSmall]'];for(var i=0;i<selectors.length;i++){var els=document.querySelectorAll(selectors[i]);if(els.length>0){places=Array.from(els).map(function(e){return e.textContent.trim();}).filter(Boolean);break;}}if(places.length===0){alert('Could not find any places. Make sure you are on your saved list page and have scrolled to the bottom.');}else{navigator.clipboard.writeText(places.join('\n')).then(function(){alert('Copied '+places.length+' places to clipboard!');}).catch(function(){prompt('Copy this manually:',places.join('\n'));});}})();"
-      onclick="return false;">
-      ☰ Copy my places
-    </a>
-    <p class="hint">Then go to your Google Maps list, scroll to the bottom, and click it.</p>
-  </div>
+    <h1>Random place picker</h1>
+    <p class="subtitle">Pick a random place from your Google Maps saved list.</p>
 
-  <label class="label">Step 2 — paste your places (one per line)</label>
-  <textarea id="places-input" placeholder="Paste from bookmarklet, or type one place per line"></textarea>
-
-  <button id="pick-btn" class="btn btn-full" style="margin-top: 12px;">Pick a random place</button>
-  <div id="error-msg"></div>
-
-  <div id="result-box">
-    <p style="font-size: 13px; color: #666; margin: 0 0 6px;">Your random place is</p>
-    <p id="result-name" style="font-size: 24px; font-weight: 500; margin: 0;">—</p>
-    <div id="result-actions">
-      <a id="maps-link" class="btn" href="#" target="_blank">Open in Google Maps</a>
-      <button id="pick-again-btn" class="btn">Pick again</button>
+    <div class="card">
+      <p class="card-title">Step 1 — set up the bookmarklet</p>
+      <p class="card-desc">Drag this to your bookmarks bar. You only need to do this once.</p>
+      <a class="bookmarklet"
+        href="javascript:(function(){var places=[];var selectors=['.fontHeadlineSmall','h3.fontHeadlineSmall','[class*=fontHeadlineSmall]'];for(var i=0;i<selectors.length;i++){var els=document.querySelectorAll(selectors[i]);if(els.length>0){places=Array.from(els).map(function(e){return e.textContent.trim();}).filter(Boolean);break;}}if(places.length===0){alert('Could not find any places. Make sure you are on your saved list page and have scrolled to the bottom.');}else{navigator.clipboard.writeText(places.join('\n')).then(function(){alert('Copied '+places.length+' places to clipboard!');}).catch(function(){prompt('Copy this manually:',places.join('\n'));});}})();"
+        onclick="return false;">
+        ☰ Copy my places
+      </a>
+      <p class="hint">Then go to your Google Maps list, scroll to the bottom, and click it.</p>
     </div>
+
+    <label class="step-label">Step 2 — paste your places</label>
+    <textarea id="places-input" placeholder="Paste from bookmarklet, or type one place per line"></textarea>
+
+    <button id="pick-btn" class="btn-primary">Pick a random place</button>
+    <div id="error-msg"></div>
+
+    <div id="result-box">
+      <p class="result-label">Your random place is</p>
+      <p id="result-name">—</p>
+      <div class="result-actions">
+        <a id="maps-link" class="btn-ghost" href="#" target="_blank">Open in Google Maps</a>
+        <button id="pick-again-btn" class="btn-ghost">Pick again</button>
+      </div>
+    </div>
+
   </div>
 
   <script>
