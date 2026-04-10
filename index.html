@@ -230,7 +230,7 @@
     <p class="subtitle">Pick a random place to go from your Google Maps saved list.</p>
 
     <div class="card">
-      <p class="card-title">Step 1 — set up the bookmarklet</p>
+      <p class="card-title">Step 1 — set up the bookmarklet (Desktop only)</p>
       <p class="card-desc">Drag this to your bookmarks bar. You only need to do this once.</p>
       <a class="bookmarklet"
         href="javascript:(function(){var places=[];var selectors=['.fontHeadlineSmall','h3.fontHeadlineSmall','[class*=fontHeadlineSmall]'];for(var i=0;i<selectors.length;i++){var els=document.querySelectorAll(selectors[i]);if(els.length>0){places=Array.from(els).map(function(e){return e.textContent.trim();}).filter(Boolean);break;}}if(places.length===0){alert('Could not find any places. Make sure you are on your saved list page and have scrolled to the bottom.');}else{navigator.clipboard.writeText(places.join('\n')).then(function(){alert('Copied '+places.length+' places to clipboard!');}).catch(function(){prompt('Copy this manually:',places.join('\n'));});}})();"
